@@ -16,6 +16,7 @@ public class Game : MonoBehaviour {
     Vector3 startPos;
     Quaternion starQua;
     public Camera gameCamera;
+    GameController gmController;
 	// Use this for initialization
     void Awake() {
         seData = new SelectData();
@@ -27,6 +28,7 @@ public class Game : MonoBehaviour {
         UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/Container/qiangaiBtn3")).onClick = OnCLickSelectQianGai;
         UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/Container/qiangaiBtn4")).onClick = OnCLickSelectQianGai;
         CanShuRoot = Utils.Find(this.gameObject, "UIData");
+        gmController = CanShuRoot.GetComponent<GameController>();
         waiguanRoot = Utils.Find(this.gameObject, "WaiGuan");
         ErJiJieMianRoot = Utils.Find(this.gameObject, "ErJiJieMian");
         mainBtnsRoot = Utils.Find(this.gameObject, "MainBtns");
@@ -90,6 +92,7 @@ public class Game : MonoBehaviour {
     private void OnCanShuHandle(GameObject go)
     {
         SetErJiE(false);
+        gmController.SetData(seData.selcetCarIndex);
         CanShuRoot.SetActive(true);
         returns[0].SetActive(true);
     }
@@ -112,7 +115,7 @@ public class Game : MonoBehaviour {
     }
 
     //private int carIndex;
-    //private void OnErJieSeclectHandle(GameObject go)
+    //private void OnErJieSeclectHandle(GameObject go) 
     //{
     //    UpdateShowModle(0, ChangeType.None);//out show ,can  change color
     //}

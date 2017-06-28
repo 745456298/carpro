@@ -12,38 +12,52 @@ public class GameController : MonoBehaviour {
         grid = Utils.Find(this.gameObject, "ScrollViewBody/ScrollView/Grid");
     }
     void Start () {
-        TextAsset TXTFile = (TextAsset)Resources.Load("Text1/ceshi");
+        
+	}
+    public void SetData(int count) {
+        TextAsset TXTFile = (TextAsset)Resources.Load("Text1/ceshi"+count);
         if (TXTFile != null)
         {
             Debug.Log("hahah" + TXTFile.text);
-            if (TXTFile != null) {
-                 lines = TXTFile.text.Split("\n"[0]);
-                 for (int i = 0; i < lines.Length; i++)
-                 {
-                     Debug.Log("第" + (i + 1) + "行" + lines[i]);
-                     string[] rowAndLs = lines[i].Split(","[0]);
-                     for (int j = 0; j < rowAndLs.Length; j++)
-                     {
-                         //Debug.Log("当前的词为："+rowAndLs[j]);
-                     }
-                 }
+            if (TXTFile != null)
+            {
+                lines = TXTFile.text.Split("\n"[0]);
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    Debug.Log("第" + (i + 1) + "行" + lines[i]);
+                    string[] rowAndLs = lines[i].Split(","[0]);
+                    for (int j = 0; j < rowAndLs.Length; j++)
+                    {
+                        //Debug.Log("当前的词为："+rowAndLs[j]);
+                    }
+                }
             }
         }
-        else {
+        else
+        {
             Debug.Log("weikong");
         }
+        ClearGameObj();
         CreatGameObject();
-	}
-    
+    }
     List<int> singleCount = new List<int>();
     List<GameObject> _gameObjeList = new List<GameObject>();
     int indexCou = 0;
-	
+    int tempCount;
+    public void ClearGameObj() {
+        if (_gameObjeList != null) {
+            for (int i = 0; i < _gameObjeList.Count; i++)
+            {
+                GameObject.DestroyImmediate(_gameObjeList[i]);    
+            }
+            _gameObjeList.Clear();
+        }
+    }
     public void CreatGameObject() {
         for (int i = 0; i < lines.Length; i++)
         {
             GameObject obj = Utils.AddChild(grid, prefabs[0]);
-            obj.transform.localPosition = new Vector3(0, -i * 68, 0);
+            obj.transform.localPosition = new Vector3(0, -i * BigHeight, 0);
             obj.name = (i + 1).ToString();
             UIEventListener.Get(obj).onClick = OnCLickObjHandle;
             _gameObjeList.Add(obj);
@@ -53,14 +67,26 @@ public class GameController : MonoBehaviour {
     private void OnCLickObjHandle(GameObject go)
     {
         indexCou = int.Parse(go.name) - 1;
-        Debug.Log("当前的index："+indexCou);
+        if (indexCou != tempCount)
+        {
+            UpdateGameobjectList(indexCou);
+        }
+        else {
+            indexCou = 1000;
+            UpdateGameobjectList(indexCou);
+        }
+        tempCount = indexCou;
+        //Debug.Log("当前的index："+indexCou);
 
-        UpdateGameobjectList(indexCou);
+        
     }
     public void OnclickObje(GameObject go) {
         indexCou = int.Parse(go.name)-1;
         
     }
+    public int xiaoHeight = 92;
+    public int xiaoJiange = 8;
+    public int BigHeight = 110;
     private void UpdateGameobjectList( int index)
     {
         ClearObjectList();
@@ -68,24 +94,25 @@ public class GameController : MonoBehaviour {
         {
             if (i <= index)
             {
-                _gameObjeList[i].transform.localPosition = new Vector3(0, -i * 68, 0);
+                _gameObjeList[i].transform.localPosition = new Vector3(0, -i * BigHeight, 0);
                 if (i == index) {
                    // _gameObjeList[index].GetComponentsInChildren<Transform>()[0].gameObject.SetActive(false);
                     GameObject[] _objs = new GameObject[3];
-                    for (int K = 0; K < 3; K++)
+                    for (int K = 0; K <3; K++)
                     {
                         _objs[K] = _gameObjeList[index].transform.GetChild(K).gameObject;
                         MoveTween et = _objs[K].AddComponent<MoveTween>();
                         et.gameObject.SetActive(true);
                         et.Onback = OnAnimationBack;
+                        et.gameObject.GetComponent<BoxCollider>().enabled = true;
                         //et.Init(_gameObjeList[index].transform.localPosition + new Vector3(0, -60 * K - 50, 0));
-                        et.Init(new Vector3(0,-60*K-116,0));
+                        et.Init(new Vector3(0, -xiaoJiange - (xiaoHeight * (K+1)), 0));
                         _xiaoList.Add(_objs[K]);
                     }
                 }
             }
             else {
-                _gameObjeList[i].transform.localPosition = new Vector3(0, -i * 68 - 190, 0);                                    
+                _gameObjeList[i].transform.localPosition = new Vector3(0, -i * BigHeight - (xiaoJiange-8 + 3 * xiaoHeight), 0);                                    
             }
         }
     }
@@ -98,7 +125,8 @@ public class GameController : MonoBehaviour {
     {
         for (int i = 0; i < _xiaoList.Count; i++)
         {
-            _xiaoList[i].SetActive(false);           
+            _xiaoList[i].SetActive(false);
+            _xiaoList[i].GetComponent<BoxCollider>().enabled = false;
 
         }
         _xiaoList.Clear();
