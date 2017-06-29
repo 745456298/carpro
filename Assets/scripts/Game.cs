@@ -17,30 +17,37 @@ public class Game : MonoBehaviour {
     Quaternion starQua;
     public Camera gameCamera;
     GameController gmController;
+    public GameObject ChangeColorRoot;
+    public GameObject waiguanChaKan;
 	// Use this for initialization
     void Awake() {
-        seData = new SelectData();
-        UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/LeftButton")).onClick = OnClickChange;//左右按钮
-        UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/RightButton")).onClick = OnClickChange;//左右按钮
-        UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/qiangaiBtn")).onClick = OnPreGaiHandle;//切换选择前盖按钮
-        UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/Container/qiangaiBtn1")).onClick = OnCLickSelectQianGai;
-        UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/Container/qiangaiBtn2")).onClick = OnCLickSelectQianGai;
-        UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/Container/qiangaiBtn3")).onClick = OnCLickSelectQianGai;
-        UIEventListener.Get(Utils.Find(this.gameObject, "WaiGuan/Container/qiangaiBtn4")).onClick = OnCLickSelectQianGai;
-        CanShuRoot = Utils.Find(this.gameObject, "UIData");
-        gmController = CanShuRoot.GetComponent<GameController>();
         waiguanRoot = Utils.Find(this.gameObject, "WaiGuan");
+        seData = new SelectData();
+        waiguanChaKan = Utils.Find(this.gameObject, "WaiGuan/WaiGuanRoot");
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "LeftButton")).onClick = OnClickChange;//左右按钮
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "RightButton")).onClick = OnClickChange;//左右按钮
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn")).onClick = OnPreGaiHandle;//切换选择前盖按钮
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn1")).onClick = OnCLickSelectQianGai;
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn2")).onClick = OnCLickSelectQianGai;
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn3")).onClick = OnCLickSelectQianGai;
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn4")).onClick = OnCLickSelectQianGai;
+        CanShuRoot = Utils.Find(this.gameObject, "UIData");
+        gmController = CanShuRoot.GetComponent<GameController>();        
         ErJiJieMianRoot = Utils.Find(this.gameObject, "ErJiJieMian");
         mainBtnsRoot = Utils.Find(this.gameObject, "MainBtns");
         starQua = gameCamera.transform.localRotation;
         startPos = gameCamera.transform.localPosition;
+        ChangeColorRoot = Utils.Find(waiguanRoot, "WaiguanChangeColorRoot");        
         for (int i = 0; i < 4; i++)
         {
             mainBtns[i] = Utils.Find(mainBtnsRoot,"car"+(i+1));
             UIEventListener.Get(mainBtns[i]).onClick = OnSelecetCarMainRoot;
             erjiBtns[i] = Utils.Find(ErJiJieMianRoot, "car" + (i + 1));
             //UIEventListener.Get(erjiBtns[i]).onClick = OnErJieSeclectHandle;
+            changeBtnColors[i] = Utils.Find(waiguanRoot, "WaiguanChangeColorRoot/" + "qiangaiBtn"+(i+1));
+            UIEventListener.Get(changeBtnColors[i]).onClick = OnWaiGuanChangeColor;
         }
+        
         returns[0] = Utils.Find(this.gameObject,"Returen");
         returns[1] = Utils.Find(ErJiJieMianRoot, "Returen");
         returns[2] = Utils.Find(waiguanRoot, "Returen");
@@ -51,8 +58,10 @@ public class Game : MonoBehaviour {
         UIEventListener.Get(erjiBtns[1]).onClick = OnCanShuHandle;
         UIEventListener.Get(erjiBtns[2]).onClick = OnNeiShiHandle;
         UIEventListener.Get(erjiBtns[3]).onClick = OnGaiZhuangHandle;
+        ChangeColorRoot.SetActive(false);
         //UIEventListener.Get(Utils.Find(this.gameObject, "LeftWheelBtn")).onClick = OnLeftWheelHandl;
     }
+    
 
     //private void OnReture2Handle(GameObject go)
     //{
@@ -72,6 +81,12 @@ public class Game : MonoBehaviour {
         SetErJiE(true);
         returns[0].SetActive(false);
         CanShuRoot.SetActive(false);
+        if (rend != null&&tempColor!=null)
+        {
+            rend.material.SetColor("_Color", tempColor);
+        }
+        waiguanChaKan.SetActive(true);
+        ChangeColorRoot.SetActive(false);
         gameCamera.transform.localPosition = startPos;
         gameCamera.transform.localRotation = starQua;
     }
@@ -85,16 +100,15 @@ public class Game : MonoBehaviour {
         SetErJiE(false);
         ResetHideOrShow(true);
         UpdateShowModle(seData.selcetCarIndex, type);
-        Debug.Log("current car index is" + seData.selcetCarIndex);
-        
+        Debug.Log("current car index is" + seData.selcetCarIndex);            
     }
     //二级界面参数按钮
     private void OnCanShuHandle(GameObject go)
     {
-        SetErJiE(false);
-        gmController.SetData(seData.selcetCarIndex);
+        SetErJiE(false);        
         CanShuRoot.SetActive(true);
         returns[0].SetActive(true);
+        gmController.SetData(seData.selcetCarIndex);
     }
     //二级界面内饰按钮
     private void OnNeiShiHandle(GameObject go)
@@ -105,21 +119,38 @@ public class Game : MonoBehaviour {
         returns[0].SetActive(true);
         SetErJiE(false);
     }
+    public Renderer rend;
+    public Renderer[] rends;
+    public Color[] colors = new Color[4]{Color.red,Color.green,Color.yellow,Color.blue};
+    Color tempColor;
+    /////////////////////////////////二级外观改变颜色部分///////
+    public GameObject[] changeBtnColors= new GameObject[4];
     //二级界面车型外观
     private void OnCarWaiHandle(GameObject go)
     {
         SetErJiE(false);
         returns[0].SetActive(true);
+        rend = rends[seData.selcetCarIndex-1];
         ResetHideOrShow(true);
         UpdateShowModle(seData.selcetCarIndex, type);
+        waiguanChaKan.SetActive(false);
+        ChangeColorRoot.SetActive(true);
     }
-
+    private void OnWaiGuanChangeColor(GameObject go)
+    {
+        tempColor = rend.material.GetColor("_Color");
+        int indexBtn = int.Parse(go.name);
+        if (rend != null) {
+            rend.material.SetColor("_Color", colors[indexBtn]);         
+        }        
+    }
     //private int carIndex;
     //private void OnErJieSeclectHandle(GameObject go) 
     //{
     //    UpdateShowModle(0, ChangeType.None);//out show ,can  change color
     //}
     SelectData seData;
+    
     private void OnSelecetCarMainRoot(GameObject go)
     {
         seData.selcetCarIndex = int.Parse(go.name.Substring(3));

@@ -9,12 +9,13 @@ public class GameController : MonoBehaviour {
 	string[] lines;
     GameObject grid;
     void Awake() {
-        grid = Utils.Find(this.gameObject, "ScrollViewBody/ScrollView/Grid");
+        
     }
     void Start () {
         
 	}
     public void SetData(int count) {
+        grid = Utils.Find(this.gameObject, "ScrollViewBody/ScrollView/Grid");
         TextAsset TXTFile = (TextAsset)Resources.Load("Text1/ceshi"+count);
         if (TXTFile != null)
         {
