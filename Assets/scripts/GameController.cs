@@ -4,19 +4,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour
+{
     public GameObject[] prefabs;
-	string[] lines;
+    string[] lines;
     GameObject grid;
-    void Awake() {
-        
+    public GameObject returnBtn;
+    public Game game;
+    void Awake()
+    {
+
     }
-    void Start () {
-        //SetData(1);
-	}
-    public void SetData(int count) {
+    void Start()
+    {
+
+    }
+    public void SetData(int count)
+    {
         grid = Utils.Find(this.gameObject, "ScrollViewBody/ScrollView/Grid");
-        TextAsset TXTFile = (TextAsset)Resources.Load("Text1/ceshi"+count);
+        returnBtn = Utils.Find(this.gameObject, "Returen");
+        UIEventListener.Get(returnBtn).onClick = OnReturnHandle;
+        TextAsset TXTFile = (TextAsset)Resources.Load("Text1/ceshi" + count);
         if (TXTFile != null)
         {
             Debug.Log("hahah" + TXTFile.text);
@@ -41,20 +49,29 @@ public class GameController : MonoBehaviour {
         ClearGameObj();
         CreatGameObject();
     }
+
+    private void OnReturnHandle(GameObject go)
+    {
+        this.gameObject.SetActive(false);
+        game.OnReture0Handle(null);
+    }
     List<int> singleCount = new List<int>();
     List<GameObject> _gameObjeList = new List<GameObject>();
     int indexCou = 0;
     int tempCount;
-    public void ClearGameObj() {
-        if (_gameObjeList != null) {
+    public void ClearGameObj()
+    {
+        if (_gameObjeList != null)
+        {
             for (int i = 0; i < _gameObjeList.Count; i++)
             {
-                GameObject.DestroyImmediate(_gameObjeList[i]);    
+                GameObject.DestroyImmediate(_gameObjeList[i]);
             }
             _gameObjeList.Clear();
         }
     }
-    public void CreatGameObject() {
+    public void CreatGameObject()
+    {
         for (int i = 0; i < lines.Length; i++)
         {
             GameObject obj = Utils.AddChild(grid, prefabs[0]);
@@ -72,23 +89,25 @@ public class GameController : MonoBehaviour {
         {
             UpdateGameobjectList(indexCou);
         }
-        else {
+        else
+        {
             indexCou = 1000;
             UpdateGameobjectList(indexCou);
         }
         tempCount = indexCou;
         //Debug.Log("当前的index："+indexCou);
 
-        
+
     }
-    public void OnclickObje(GameObject go) {
-        indexCou = int.Parse(go.name)-1;
-        
+    public void OnclickObje(GameObject go)
+    {
+        indexCou = int.Parse(go.name) - 1;
+
     }
     public int xiaoHeight = 92;
     public int xiaoJiange = 8;
     public int BigHeight = 110;
-    private void UpdateGameobjectList( int index)
+    private void UpdateGameobjectList(int index)
     {
         ClearObjectList();
         for (int i = 0; i < _gameObjeList.Count; i++)
@@ -96,10 +115,11 @@ public class GameController : MonoBehaviour {
             if (i <= index)
             {
                 _gameObjeList[i].transform.localPosition = new Vector3(0, -i * BigHeight, 0);
-                if (i == index) {
-                   // _gameObjeList[index].GetComponentsInChildren<Transform>()[0].gameObject.SetActive(false);
+                if (i == index)
+                {
+                    // _gameObjeList[index].GetComponentsInChildren<Transform>()[0].gameObject.SetActive(false);
                     GameObject[] _objs = new GameObject[3];
-                    for (int K = 0; K <3; K++)
+                    for (int K = 0; K < 3; K++)
                     {
                         _objs[K] = _gameObjeList[index].transform.GetChild(K).gameObject;
                         MoveTween et = _objs[K].AddComponent<MoveTween>();
@@ -107,20 +127,21 @@ public class GameController : MonoBehaviour {
                         et.Onback = OnAnimationBack;
                         et.gameObject.GetComponent<BoxCollider>().enabled = true;
                         //et.Init(_gameObjeList[index].transform.localPosition + new Vector3(0, -60 * K - 50, 0));
-                        et.Init(new Vector3(0, -xiaoJiange - (xiaoHeight * (K+1)), 0));
+                        et.Init(new Vector3(0, -xiaoJiange - (xiaoHeight * (K + 1)), 0));
                         _xiaoList.Add(_objs[K]);
                     }
                 }
             }
-            else {
-                _gameObjeList[i].transform.localPosition = new Vector3(0, -i * BigHeight - (xiaoJiange-8 + 3 * xiaoHeight), 0);                                    
+            else
+            {
+                _gameObjeList[i].transform.localPosition = new Vector3(0, -i * BigHeight - (xiaoJiange - 8 + 3 * xiaoHeight), 0);
             }
         }
     }
     List<GameObject> _xiaoList = new List<GameObject>();
     private void OnAnimationBack(GameObject go)
     {
-       
+
     }
     void ClearObjectList()
     {
@@ -200,9 +221,11 @@ public class GameController : MonoBehaviour {
     //    _objlist.Clear();
     //}
 }
-public class DataItem {
-    public void InitData(GameObject go,int index) {     
-     
+public class DataItem
+{
+    public void InitData(GameObject go, int index)
+    {
+
     }
 }
 class MoveTween : MonoBehaviour
@@ -221,12 +244,12 @@ class MoveTween : MonoBehaviour
         args.Add("oncomplete", new System.Action<object>(AnimationEnd));
         args.Add("oncompleteparams", "end");
         args.Add("oncompletetarget", gameObject);
-        iTween.MoveTo(gameObject, args);            
+        iTween.MoveTo(gameObject, args);
     }
     void AnimationEnd(object o)
-    {       
+    {
         DestroySelf();
-        if (gameObject != null) 
+        if (gameObject != null)
             Onback(gameObject);
     }
     public void DestroySelf()

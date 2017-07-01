@@ -2,15 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Game : MonoBehaviour {
+public class Game : MonoBehaviour
+{
 
-    public  GameObject[] carModels = new GameObject[4];
+    public GameObject[] carModels = new GameObject[4];
     List<GameObject> preGai = new List<GameObject>();
     List<GameObject> carGulu = new List<GameObject>();
-    public GameObject[] returns =new GameObject[3];
+    public GameObject[] returns = new GameObject[3];
     ChangeType type = ChangeType.None;
     public GameObject gamePrefa;
-    GameObject waiguanRoot,mainBtnsRoot,ErJiJieMianRoot,CanShuRoot;
+    GameObject waiguanRoot, mainBtnsRoot, ErJiJieMianRoot, CanShuRoot;
     GameObject[] mainBtns = new GameObject[4];
     GameObject[] erjiBtns = new GameObject[4];
     Vector3 startPos;
@@ -19,11 +20,12 @@ public class Game : MonoBehaviour {
     GameController gmController;
     public GameObject ChangeColorRoot;
     public GameObject waiguanChaKan;
-	// Use this for initialization
-    void Awake() {
+    // Use this for initialization
+    void Awake()
+    {
         waiguanRoot = Utils.Find(this.gameObject, "WaiGuan");
         seData = new SelectData();
-        //waiguanChaKan = Utils.Find(this.gameObject, "WaiGuan/WaiGuanRoot");
+        waiguanChaKan = Utils.Find(this.gameObject, "WaiGuan/WaiGuanRoot");
         UIEventListener.Get(Utils.Find(waiguanChaKan, "LeftButton")).onClick = OnClickChange;//左右按钮
         UIEventListener.Get(Utils.Find(waiguanChaKan, "RightButton")).onClick = OnClickChange;//左右按钮
         UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn")).onClick = OnPreGaiHandle;//切换选择前盖按钮
@@ -32,23 +34,23 @@ public class Game : MonoBehaviour {
         UIEventListener.Get(Utils.Find(waiguanChaKan, "Container/qiangaiBtn3")).onClick = OnCLickSelectQianGai;
         UIEventListener.Get(Utils.Find(waiguanChaKan, "Container/qiangaiBtn4")).onClick = OnCLickSelectQianGai;
         CanShuRoot = Utils.Find(this.gameObject, "UIData");
-        gmController = CanShuRoot.GetComponent<GameController>();        
+        gmController = CanShuRoot.GetComponent<GameController>();
         ErJiJieMianRoot = Utils.Find(this.gameObject, "ErJiJieMian");
         mainBtnsRoot = Utils.Find(this.gameObject, "MainBtns");
         starQua = gameCamera.transform.localRotation;
         startPos = gameCamera.transform.localPosition;
-        ChangeColorRoot = Utils.Find(this.gameObject, "WaiGuan/WaiguanChangeColorRoot");        
+        ChangeColorRoot = Utils.Find(waiguanRoot, "WaiguanChangeColorRoot");
         for (int i = 0; i < 4; i++)
         {
-            mainBtns[i] = Utils.Find(mainBtnsRoot,"car"+(i+1));
+            mainBtns[i] = Utils.Find(mainBtnsRoot, "car" + i);
             UIEventListener.Get(mainBtns[i]).onClick = OnSelecetCarMainRoot;
             erjiBtns[i] = Utils.Find(ErJiJieMianRoot, "car" + (i + 1));
             //UIEventListener.Get(erjiBtns[i]).onClick = OnErJieSeclectHandle;
             changeBtnColors[i] = Utils.Find(ChangeColorRoot, i.ToString());
             UIEventListener.Get(changeBtnColors[i]).onClick = OnWaiGuanChangeColor;
         }
-        
-        returns[0] = Utils.Find(this.gameObject,"Returen");
+
+        returns[0] = Utils.Find(this.gameObject, "Returen");
         returns[1] = Utils.Find(ErJiJieMianRoot, "Returen");
         returns[2] = Utils.Find(waiguanRoot, "Returen");
         UIEventListener.Get(returns[0]).onClick = OnReture0Handle;//几个功能返二级界面
@@ -61,12 +63,12 @@ public class Game : MonoBehaviour {
         ChangeColorRoot.SetActive(false);
         //UIEventListener.Get(Utils.Find(this.gameObject, "LeftWheelBtn")).onClick = OnLeftWheelHandl;
     }
-    
+
 
     //private void OnReture2Handle(GameObject go)
     //{
     //    SetAllHide();
-        
+
     //}
 
     private void OnReture1Handle(GameObject go)
@@ -75,13 +77,13 @@ public class Game : MonoBehaviour {
         SetMainBool(true);
     }
 
-    private void OnReture0Handle(GameObject go)
+    public void OnReture0Handle(GameObject go)
     {
         SetAllHide();
         SetErJiE(true);
         returns[0].SetActive(false);
         CanShuRoot.SetActive(false);
-        if (rend != null&&tempColor!=null)
+        if (rend != null && tempColor != null)
         {
             rend.material.SetColor("_Color", tempColor);
         }
@@ -100,12 +102,12 @@ public class Game : MonoBehaviour {
         SetErJiE(false);
         ResetHideOrShow(true);
         UpdateShowModle(seData.selcetCarIndex, type);
-        Debug.Log("current car index is" + seData.selcetCarIndex);            
+        Debug.Log("current car index is" + seData.selcetCarIndex);
     }
     //二级界面参数按钮
     private void OnCanShuHandle(GameObject go)
     {
-        SetAllHide();               
+        SetErJiE(false);
         CanShuRoot.SetActive(true);
         //returns[0].SetActive(true);
         gmController.SetData(seData.selcetCarIndex);
@@ -121,19 +123,18 @@ public class Game : MonoBehaviour {
     }
     public Renderer rend;
     public Renderer[] rends;
-    public Color[] colors = new Color[4]{Color.red,Color.green,Color.yellow,Color.blue};
+    public Color[] colors = new Color[4] { Color.red, Color.green, Color.yellow, Color.blue };
     Color tempColor;
     /////////////////////////////////二级外观改变颜色部分///////
-    public GameObject[] changeBtnColors= new GameObject[4];
+    public GameObject[] changeBtnColors = new GameObject[4];
     //二级界面车型外观
     private void OnCarWaiHandle(GameObject go)
     {
         SetErJiE(false);
         returns[0].SetActive(true);
-        rend = rends[seData.selcetCarIndex-1];
+        rend = rends[seData.selcetCarIndex];
         ResetHideOrShow(true);
         UpdateShowModle(seData.selcetCarIndex, type);
-        waiguanRoot.SetActive(true);
         waiguanChaKan.SetActive(false);
         ChangeColorRoot.SetActive(true);
     }
@@ -141,9 +142,10 @@ public class Game : MonoBehaviour {
     {
         tempColor = rend.material.GetColor("_Color");
         int indexBtn = int.Parse(go.name);
-        if (rend != null) {
-            rend.material.SetColor("_Color", colors[indexBtn]);         
-        }        
+        if (rend != null)
+        {
+            rend.material.SetColor("_Color", colors[indexBtn]);
+        }
     }
     //private int carIndex;
     //private void OnErJieSeclectHandle(GameObject go) 
@@ -151,7 +153,7 @@ public class Game : MonoBehaviour {
     //    UpdateShowModle(0, ChangeType.None);//out show ,can  change color
     //}
     SelectData seData;
-    
+
     private void OnSelecetCarMainRoot(GameObject go)
     {
         seData.selcetCarIndex = int.Parse(go.name.Substring(3));
@@ -159,8 +161,9 @@ public class Game : MonoBehaviour {
         SetMainBool(false);
         returns[0].SetActive(false);
         SetErJiE(true);
-    }   
-	void Start () {
+    }
+    void Start()
+    {
         type = ChangeType.None;
         UpdateShowModle(0, type);
         CanShuRoot.SetActive(false);
@@ -169,34 +172,41 @@ public class Game : MonoBehaviour {
         SetMainBool(true);
         ResetHideOrShow(false);
         returns[0].SetActive(false);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	  
-	}
-    void SetAllHide(){
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    void SetAllHide()
+    {
         SetWaiGuan(false);
         SetMainBool(false);
         SetErJiE(false);
         ResetHideOrShow(false);
     }
-    void ResetHideOrShow(bool isSHow) {
-        gamePrefa.SetActive(isSHow);            
+    void ResetHideOrShow(bool isSHow)
+    {
+        gamePrefa.SetActive(isSHow);
     }
-    void SetWaiGuan(bool isShow) {
+    void SetWaiGuan(bool isShow)
+    {
         waiguanRoot.SetActive(isShow);
     }
-    void SetMainBool(bool isShow) {
+    void SetMainBool(bool isShow)
+    {
         mainBtnsRoot.SetActive(isShow);
     }
-    void SetErJiE(bool isShow) {
+    void SetErJiE(bool isShow)
+    {
         ErJiJieMianRoot.SetActive(isShow);
     }
-    private void OnCLickSelectQianGai(GameObject go) {
+    private void OnCLickSelectQianGai(GameObject go)
+    {
         if (go.name == "qiangaiBtn1")
         {
-            UpdateShowXiaModle(ChangeType.qiangai,0);
+            UpdateShowXiaModle(ChangeType.qiangai, 0);
         }
         else if (go.name == "qiangaiBtn2")
         {
@@ -214,19 +224,21 @@ public class Game : MonoBehaviour {
     //int index = 0;         
     private void OnClickChange(GameObject go)
     {
-        if (go.name == "LeftButton") {
+        if (go.name == "LeftButton")
+        {
             Debug.Log("1111");
             if (seData.selcetCarIndex > 0)
             {
                 seData.selcetCarIndex--;
-                
+
             }
         }
-        else if (go.name == "RightButton") {
+        else if (go.name == "RightButton")
+        {
             Debug.Log("222");
             if (seData.selcetCarIndex < 3)
             {
-                seData.selcetCarIndex++;                
+                seData.selcetCarIndex++;
             }
         }
         for (int i = 0; i < 4; i++)
@@ -243,17 +255,19 @@ public class Game : MonoBehaviour {
     {
         //UpdateShowXiaModle(index, ChangeType.guolu);       
     }
-    public void UpdateShowModle(int index,ChangeType type) {
+    public void UpdateShowModle(int index, ChangeType type)
+    {
         for (int i = 0; i < 4; i++)
         {
             if (i == index)
             {
                 carModels[i].SetActive(true);
             }
-            else {
+            else
+            {
                 carModels[i].SetActive(false);
             }
-        }                
+        }
         //for (int i = 0; i < 4; i++)
         //{
         //foreach (Transform t in carModels[index].transform.FindChild("QianGaiPos").GetComponentsInChildren<Transform>())
@@ -269,9 +283,10 @@ public class Game : MonoBehaviour {
         UpdateShowXiaModle(type);
         //preGai.Add();
     }
-    
-    public void UpdateShowXiaModle(ChangeType type,int qianGaiIndex=0) {
-        
+
+    public void UpdateShowXiaModle(ChangeType type, int qianGaiIndex = 0)
+    {
+
         switch ((int)type)
         {
             case 1:
