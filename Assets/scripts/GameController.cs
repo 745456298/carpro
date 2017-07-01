@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour {
         
     }
     void Start () {
-        
+        //SetData(1);
 	}
     public void SetData(int count) {
         grid = Utils.Find(this.gameObject, "ScrollViewBody/ScrollView/Grid");

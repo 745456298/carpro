@@ -23,28 +23,28 @@ public class Game : MonoBehaviour {
     void Awake() {
         waiguanRoot = Utils.Find(this.gameObject, "WaiGuan");
         seData = new SelectData();
-        waiguanChaKan = Utils.Find(this.gameObject, "WaiGuan/WaiGuanRoot");
+        //waiguanChaKan = Utils.Find(this.gameObject, "WaiGuan/WaiGuanRoot");
         UIEventListener.Get(Utils.Find(waiguanChaKan, "LeftButton")).onClick = OnClickChange;//左右按钮
         UIEventListener.Get(Utils.Find(waiguanChaKan, "RightButton")).onClick = OnClickChange;//左右按钮
         UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn")).onClick = OnPreGaiHandle;//切换选择前盖按钮
-        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn1")).onClick = OnCLickSelectQianGai;
-        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn2")).onClick = OnCLickSelectQianGai;
-        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn3")).onClick = OnCLickSelectQianGai;
-        UIEventListener.Get(Utils.Find(waiguanChaKan, "qiangaiBtn4")).onClick = OnCLickSelectQianGai;
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "Container/qiangaiBtn1")).onClick = OnCLickSelectQianGai;
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "Container/qiangaiBtn2")).onClick = OnCLickSelectQianGai;
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "Container/qiangaiBtn3")).onClick = OnCLickSelectQianGai;
+        UIEventListener.Get(Utils.Find(waiguanChaKan, "Container/qiangaiBtn4")).onClick = OnCLickSelectQianGai;
         CanShuRoot = Utils.Find(this.gameObject, "UIData");
         gmController = CanShuRoot.GetComponent<GameController>();        
         ErJiJieMianRoot = Utils.Find(this.gameObject, "ErJiJieMian");
         mainBtnsRoot = Utils.Find(this.gameObject, "MainBtns");
         starQua = gameCamera.transform.localRotation;
         startPos = gameCamera.transform.localPosition;
-        ChangeColorRoot = Utils.Find(waiguanRoot, "WaiguanChangeColorRoot");        
+        ChangeColorRoot = Utils.Find(this.gameObject, "WaiGuan/WaiguanChangeColorRoot");        
         for (int i = 0; i < 4; i++)
         {
             mainBtns[i] = Utils.Find(mainBtnsRoot,"car"+(i+1));
             UIEventListener.Get(mainBtns[i]).onClick = OnSelecetCarMainRoot;
             erjiBtns[i] = Utils.Find(ErJiJieMianRoot, "car" + (i + 1));
             //UIEventListener.Get(erjiBtns[i]).onClick = OnErJieSeclectHandle;
-            changeBtnColors[i] = Utils.Find(waiguanRoot, "WaiguanChangeColorRoot/" + "qiangaiBtn"+(i+1));
+            changeBtnColors[i] = Utils.Find(ChangeColorRoot, i.ToString());
             UIEventListener.Get(changeBtnColors[i]).onClick = OnWaiGuanChangeColor;
         }
         
@@ -105,9 +105,9 @@ public class Game : MonoBehaviour {
     //二级界面参数按钮
     private void OnCanShuHandle(GameObject go)
     {
-        SetErJiE(false);        
+        SetAllHide();               
         CanShuRoot.SetActive(true);
-        returns[0].SetActive(true);
+        //returns[0].SetActive(true);
         gmController.SetData(seData.selcetCarIndex);
     }
     //二级界面内饰按钮
@@ -133,6 +133,7 @@ public class Game : MonoBehaviour {
         rend = rends[seData.selcetCarIndex-1];
         ResetHideOrShow(true);
         UpdateShowModle(seData.selcetCarIndex, type);
+        waiguanRoot.SetActive(true);
         waiguanChaKan.SetActive(false);
         ChangeColorRoot.SetActive(true);
     }
