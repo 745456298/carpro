@@ -123,7 +123,7 @@ public class Game : MonoBehaviour
     }
     public Renderer rend;
     public Renderer[] rends;
-    public Color[] colors = new Color[4] { Color.red, Color.green, Color.yellow, Color.blue };
+    Color[] colors = new Color[4] { Color.red, Color.green, Color.yellow, Color.blue };
     Color tempColor;
     /////////////////////////////////二级外观改变颜色部分///////
     public GameObject[] changeBtnColors = new GameObject[4];
@@ -131,6 +131,7 @@ public class Game : MonoBehaviour
     private void OnCarWaiHandle(GameObject go)
     {
         SetErJiE(false);
+        waiguanRoot.SetActive(true);
         returns[0].SetActive(true);
         rend = rends[seData.selcetCarIndex];
         ResetHideOrShow(true);
