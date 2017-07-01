@@ -9,7 +9,7 @@ public class Test : MonoBehaviour {
     
     //public GameObject Btn;
 	void Start () {
-        colors = new Color[5] { Color.red, Color.black, Color.blue, Color.gray, Color.yellow };
+        //colors = new Color[5] { Color.red, Color.black, Color.blue, Color.gray, Color.yellow };
         //UIEventListener.Get(Btn).onClick = ChangeColor;
     }
 
