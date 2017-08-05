@@ -147,9 +147,10 @@ public class GameController : MonoBehaviour
     {
         for (int i = 0; i < _xiaoList.Count; i++)
         {
-            _xiaoList[i].SetActive(false);
-            _xiaoList[i].GetComponent<BoxCollider>().enabled = false;
-
+            if (_xiaoList[i] != null) {
+                _xiaoList[i].SetActive(false);
+                _xiaoList[i].GetComponent<BoxCollider>().enabled = false;
+            }            
         }
         _xiaoList.Clear();
     }
